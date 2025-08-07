@@ -95,9 +95,6 @@ Validate that the Ramp sign‑up and login pages handle user input, validations,
 ## 📂 Project Structure
 
 ```
-## 📁 Project Structure
-
-```
 
 PROJECTLOGINAPI/
 ├── .github/
@@ -151,8 +148,6 @@ PROJECTLOGINAPI/
 │
 ├── .gitignore
 └── README.md
-
-```
 
 ```
 
