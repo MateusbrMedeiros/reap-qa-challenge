@@ -1,0 +1,23 @@
+## 📌 Test Strategy – `POST /Account/v1/User`
+
+This set of tests focuses on validating the behavior of the user creation endpoint under **positive scenarios**, ensuring that:
+
+- Users can be created successfully with valid credentials.
+- Special characters in usernames are handled appropriately.
+- Sensitive information (e.g., passwords) is never returned in the API response.
+
+### 🎯 Goals
+
+- Ensure valid user creation returns the expected status code and behavior.
+- Confirm that the API supports usernames with special characters.
+- Verify that security rules are enforced (passwords are never exposed in responses).
+
+---
+
+## 🧪 Test Cases – `POST /Account/v1/User`
+
+| ID     | Scenario                                | Steps                                                                                                  | Expected Result                                     |
+|--------|-----------------------------------------|--------------------------------------------------------------------------------------------------------|-----------------------------------------------------|
+| AC-01  | Create a valid user                     | Send a valid `userName` and `password` to `/Account/v1/User`                                          | Status code `201` is returned                       |
+| AC-02  | Username with special characters        | Send a `userName` with special characters and a valid password                                         | Status code `201` is returned                       |
+| AC-03  | Response must not expose password field | Create user and validate that the `password` field is not present in the JSON response body           | Response body does **not** include `password` key   |

@@ -1,9 +1,9 @@
 import { expect, test } from "@playwright/test";
-import { getAllBooks } from "../../utils/api/booksHelpers";
+import { getBooks } from "../../utils/api/booksHelpers";
 
 test.describe("/BookStore/v1/Books - GET", () => {
   test("Should return list of books", async ({ request }) => {
-    const res = await getAllBooks(request);
+    const res = await getBooks(request);
     expect(res.status()).toBe(200);
 
     const body = await res.json();

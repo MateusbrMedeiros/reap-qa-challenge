@@ -1,9 +1,13 @@
-# Ramp QA Challenge – Frontend Automation (Sign‑up & Login)
+# Reap QA Challenge – Frontend & API Automation (Sign-up, Login & BookStore API)
 
 ## 📌 Overview
 
-This project automates the **sign‑up** and **login** flows for the [Ramp](https://app.ramp.com) web application using [Playwright](https://playwright.dev/) with TypeScript.  
-It covers **positive**, **negative**, and **edge cases** to validate input handling, navigation, and error messaging.
+This project automates both **frontend** and **API** flows for the [Ramp](https://app.ramp.com) web application using [Playwright](https://playwright.dev/) with TypeScript.
+
+- On the **frontend**, it validates the **sign‑up** and **login** flows through UI interactions.
+- On the **backend**, it covers full **API test coverage** for the BookStore service, including user creation, authentication, and book management operations.
+
+It includes **positive**, **negative**, and **edge cases** to ensure robust input handling, proper authorization, consistent navigation, and accurate error messaging.
 
 ---
 
@@ -41,74 +45,115 @@ npx playwright test --headed
 **Objective**  
 Validate that the Ramp sign‑up and login pages handle user input, validations, and navigation correctly for both valid and invalid cases, ensuring a consistent user experience and enforcing security rules for credentials.
 
-**Scope of Coverage**
+## ✅ Scope of Coverage
 
-- **Sign‑up**
-  - Successful account creation with valid inputs.
-  - Validation for required fields, invalid formats, and password policy.
-  - Handling of already registered emails.
-  - Navigation to the appropriate next step (email verification or login).
-- **Login**
-  - Validation of correct and incorrect credentials.
-  - Handling of empty or invalid inputs.
-  - Navigation for password reset and switching email addresses.
-  - Native HTML5 form validation and application-level error handling.
+### 🔐 Sign‑up
 
-**Approach**
+- Successful account creation with valid inputs.
+- Validation for required fields, invalid formats, and password policy.
+- Handling of already registered emails.
+- Navigation to the appropriate next step (email verification or login).
+
+### 🔓 Login
+
+- Validation of correct and incorrect credentials.
+- Handling of empty or invalid inputs.
+- Navigation for password reset and switching email addresses.
+- Native HTML5 form validation and application-level error handling.
+
+### 📚 BookStore API
+
+- **User Creation:** Positive and negative flows for creating users, including special character support, duplicate accounts, and malformed inputs.
+- **Authentication & Token Generation:** Token creation with valid and invalid credentials, including missing or malformed headers.
+- **User Retrieval:** Validation of authorized access, correct user data, and error scenarios for missing or invalid IDs.
+- **Book Management:**
+  - Fetching the public list of books.
+  - Adding single or multiple books to a user.
+  - Attempting to add invalid or duplicate books.
+  - Updating a book (replacing ISBN) with proper auth and valid structure.
+  - Deleting all books or a single book from a user’s collection.
+  - Error handling for invalid users, empty collections, malformed requests, and missing auth.
+
+---
+
+## 🧪 Approach
 
 - **Automation Tool:** Playwright with TypeScript.
-- **Execution:** Tests are run in isolated scenarios with a `beforeEach` hook navigating to the target page.
-- **Assertions:** Verify text content, URL changes, element visibility, and native validation messages.
-- **Positive and Negative Testing:** Includes happy-path flows and edge cases.
-- **Resilience:** Tests account for both application-provided error messages and browser-native validation.
-
----
-
-## 🧪 Test Cases & Steps
-
-### **Sign‑up Scenarios**
-
-| ID    | Scenario                   | Steps                                                                                           | Expected Result                                                        |
-| ----- | -------------------------- | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| SU-01 | Valid sign‑up              | 1. Navigate to `/sign-up`<br>2. Fill all fields with valid data<br>3. Submit form               | Redirects to "Verify your email" page                                  |
-| SU-02 | Empty fields               | 1. Navigate to `/sign-up`<br>2. Submit without filling fields                                   | Displays "required" error for all mandatory fields                     |
-| SU-03 | Invalid email format       | 1. Fill form with invalid email format<br>2. Submit                                             | Displays "Invalid email address"                                       |
-| SU-04 | Weak password              | 1. Fill form with short password<br>2. Submit                                                   | Shows messages for missing length, uppercase, and numeric requirements |
-| SU-05 | Password without lowercase | 1. Fill form with password containing only uppercase letters, numbers, and symbols<br>2. Submit | Displays "At least 1 lowercase character"                              |
-| SU-06 | Commonly used password     | 1. Fill form with common password (e.g., `1234567890!@#`)<br>2. Submit                          | Displays "Not a commonly used password"                                |
-| SU-07 | Email already registered   | 1. Sign‑up with a unique email<br>2. Repeat sign‑up with same email<br>3. Submit                | Redirects to `/sign-in`                                                |
-
----
-
-### **Login Scenarios**
-
-| ID    | Scenario                        | Steps                                                                                              | Expected Result                                                                    |
-| ----- | ------------------------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| LG-01 | "Valid" credentials (simulated) | 1. Navigate to `/sign-in`<br>2. Enter valid email<br>3. Continue<br>4. Enter password<br>5. Submit | Application shows invalid credentials message (no real login possible in test env) |
-| LG-02 | Wrong password                  | 1. Enter valid email<br>2. Continue<br>3. Enter wrong password<br>4. Submit                        | Displays invalid credentials error                                                 |
-| LG-03 | Empty password                  | 1. Enter valid email<br>2. Continue<br>3. Leave password empty<br>4. Submit                        | Stays on same page, password field remains visible                                 |
-| LG-04 | Invalid email format            | 1. Enter invalid email<br>2. Continue                                                              | Browser native validation message contains "@"                                     |
-| LG-05 | Password reset navigation       | 1. Enter valid email<br>2. Continue<br>3. Click "Reset password"                                   | Navigates to `/forgot-password`                                                    |
-| LG-06 | Change email link               | 1. Enter valid email<br>2. Continue<br>3. Click "Use a different email"                            | Returns to email entry field                                                       |
+- **Execution:**
+  - Frontend: Tests run in isolated browser contexts with `beforeEach` navigation.
+  - API: Tests use Playwright’s `APIRequestContext`.
+- **Assertions:**
+  - Frontend: Text content, URLs, visibility, native validation.
+  - API: Status codes, payload validation, error messages.
+- **Test Types:**
+  - Positive (happy path)
+  - Negative (edge/error cases)
+- **Resilience:** Full-stack validations for robustness.
 
 ---
 
 ## 📂 Project Structure
 
 ```
-project-root/
-│── tests/
-│   ├── frontend/
-│   │   ├── signup.spec.ts
-│   │   ├── login.spec.ts
-│── utils/
-│   ├── frontend/
-│       ├── email.ts
-│       ├── formHelpers.ts
-│       ├── password.ts
-│── playwright.config.ts
-│── package.json
-│── README.md
+## 📁 Project Structure
+
+```
+
+PROJECTLOGINAPI/
+├── .github/
+│ └── workflows/
+│ └── playwright.yml
+│
+├── docs/
+│ ├── api/
+│ │ ├── addBooksUser.md
+│ │ ├── createUser.md
+│ │ ├── createUserNegativeScenarios.md
+│ │ ├── deleteBooksUser.md
+│ │ ├── deleteUser.md
+│ │ ├── getBooks.md
+│ │ ├── getUser.md
+│ │ └── updateBookUser.md
+│ │
+│ └── frontend/
+│ ├── login.md
+│ └── signup.md
+│
+├── playwright-report/
+├── test-results/
+│
+├── tests/
+│ ├── api/
+│ │ ├── account.create.spec.ts
+│ │ ├── account.delete.spec.ts
+│ │ ├── account.get.spec.ts
+│ │ ├── account.negative.spec.ts
+│ │ ├── account.password.spec.ts
+│ │ ├── addBooksUser.spec.ts
+│ │ ├── bookstore.get.spec.ts
+│ │ ├── deleteBookUser.spec.ts
+│ │ └── updateBookUser.spec.ts
+│ │
+│ └── frontend/
+│ ├── login.spec.ts
+│ └── signup.spec.ts
+│
+├── utils/
+│ ├── api/
+│ │ ├── accountHelpers.ts
+│ │ ├── booksHelpers.ts
+│ │ └── userHelpers.ts
+│ │
+│ └── frontend/
+│ ├── email.ts
+│ ├── formHelpers.ts
+│ └── password.ts
+│
+├── .gitignore
+└── README.md
+
+```
+
 ```
 
 ---
